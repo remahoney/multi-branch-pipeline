@@ -10,8 +10,7 @@ pipeline {
             numToKeepStr: '10'
         )
     }
-     
-stages {
+     stages {
         stage('Cleanup Workspace') {
             steps {
                 cleanWs()
