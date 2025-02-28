@@ -1,16 +1,20 @@
 pipeline {
+
     agent {
         node {
-            label 'jenkins-agent'
+            label 'agent-01'
         }
     }
+
     options {
-        buildDiscarder logRotator(
-            daysToKeepStr: '16',
+        buildDiscarder logRotator( 
+            daysToKeepStr: '16', 
             numToKeepStr: '10'
         )
     }
+
     stages {
+        
         stage('Cleanup Workspace') {
             steps {
                 cleanWs()
@@ -19,15 +23,17 @@ pipeline {
                 """
             }
         }
+
         stage('Code Checkout') {
             steps {
                 checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/main']],
+                    $class: 'GitSCM', 
+                    branches: [[name: '*/main']], 
                     userRemoteConfigs: [[url: 'https://github.com/spring-projects/spring-petclinic.git']]
                 ])
             }
         }
+
         stage('Unit Testing') {
             steps {
                 sh """
@@ -35,6 +41,7 @@ pipeline {
                 """
             }
         }
+
         stage('Code Analysis') {
             steps {
                 sh """
@@ -42,6 +49,7 @@ pipeline {
                 """
             }
         }
+
         stage('Deploy To Dev & QA') {
             when {
                 branch 'develop'
@@ -57,7 +65,8 @@ pipeline {
                 echo "Deploying to QA Environment"
                 """
             }
-        } 
+        }
+
         stage('Deploy To Staging and Pre-Prod Code') {
             when {
                 branch 'main'
@@ -74,5 +83,6 @@ pipeline {
                 """
             }
         }
-    }
+
+    }   
 }
